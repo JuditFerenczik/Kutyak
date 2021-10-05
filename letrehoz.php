@@ -17,14 +17,16 @@ and open the template in the editor.
     <body>
         
         <?php
-$mysqli = new mysqli("localhost","root","", "allatok");
-        if($mysqli -> connect_error){
-            echo "Hiba a csatlakozáskor";
-            exit();
+   global $connction;
+        $connection = mysqli_connect("localhost","root","", "allatok");
+        if($connection){
+            echo "Csatlakozva"  ;
+        }else{
+            die("Hiba a csatlakozáskor");
+           
         }
-
-if(isset($_POST['submit'])){   
-     $nev = filter_input(INPUT_POST, "nev", FILTER_SANITIZE_STRING);
+     
+             $nev = filter_input(INPUT_POST, "nev", FILTER_SANITIZE_STRING);
      echo "<p> " . $nev ."</p>";
      $faj = filter_input(INPUT_POST, "faj", FILTER_SANITIZE_STRING);
      echo "<p> " . $faj ."</p>";
@@ -33,17 +35,23 @@ if(isset($_POST['submit'])){
    $magassag = filter_input(INPUT_POST, "mag", FILTER_SANITIZE_NUMBER_INT);
    echo "<p> " . $magassag ."</p>";
     $szuletett = filter_input(INPUT_POST, "születés", FILTER_SANITIZE_STRING);
-    $szuletes = date("Y-m-d", $szuletett );
+    $szuletes = date_format(date_create($szuletett), "Y-m-d");
     echo "<p> " . $szuletes ."</p>";
-    $query = "INSERT INTO KUTYIK(név, fajta, testsúly,magasság, születésnap) values";
-    $query .= "(" . $nev ."," . $faj .",". $tomeg . "," .$magassag . "," . $szuletes .")"  ;
+    
+    if(empty($nev) || empty($faj) || empty($tomeg) || empty($magassag) || empty($szuletes) ){
+       echo "<p> Egyik input üres volt!! </p>"; 
+    }else{
+    $query = "INSERT INTO KUTYIK(név, fajta, testsúly,magasság, születésnap) values( '$nev' ,  '$faj' , '$tomeg' , '$magassag'  ,  '$szuletes' )"  ;
     echo '<div>' . $query . '</div>';
-    $res = mysql_query($query);
-if(!res){
-    die("Nem sikerült a hozzáadás" . mysqli_error($mysqli));
+    $res = mysqli_query($connection,$query);
+if(!$res){
+    die("Nem sikerült a hozzáadás" . mysqli_error($connection));
 }
+        }
+        
 
-}
+mysqli_close($connection);
+
 
 
 ?>
@@ -58,40 +66,40 @@ if(!res){
 
 
     <div class="container collapse " id="collapseForm">
-        <form class="bg-light rounded bg-primary w-50 mt-5 mx-auto px-5 pt-4 pb-3"  method="POST">
+        <form class="bg-light rounded bg-primary w-50 mt-5 mx-auto px-5 pt-4 pb-3"   method="POST">
             <div
-                class="  justify-content-center text-justify h3 text-white  p-3 h-25 form-group row bg-dark rounded col-md-12">
+                class=" h3 text-dark  p-3 h-25 form-group row bg-dark rounded col-md-12">
                 Kutyák hozzáadása
             </div>
             <div class="form-group row">
-                <label for="nev" class="col-md-4 col-form-label">Név:</label>
+                <label for="nev" class="text-center  col-md-2 col-form-label">Név:</label>
                 <div class="col-md-8">
                     <input type="text" class="form-control" id="nev" name="nev" placeholder="név">
                 </div>
 
             </div>
             <div class="form-group row">
-                <label for="faj" class="col-md-4 col-form-label">Fajta:</label>
+                <label for="faj" class="text-center  col-md-2 col-form-label">Fajta:</label>
                 <div class="col-md-8">
                     <input type="text" class="form-control" name="faj" id="faj" placeholder="fajta">
                 </div>
             </div>
 
             <div class="form-group row">
-                <label for="test" class="col-md-4 col-form-label">Testsúly:</label>
+                <label for="test" class="text-center  col-md-2 col-form-label">Testsúly:</label>
                 <div class="col-md-8">
                     <input type="number" class="form-control" name="test" id="test" placeholder="kilogramm">
                 </div>
             </div>
             <div class="form-group row ">
-                <label for="mag" class="col-md-4 col-form-label">Magasság:</label>
+                <label for="mag" class="text-center col-md-2 col-form-label">Magasság:</label>
                 <div class="col-md-8">
                     <input type="number" class="form-control" name="mag" id="mag" placeholder="centiméter">
                 </div>
             </div>
 
             <div class="form-group row">
-                <label for="születés" class="col-md-4 col-form-label">Születésnap:</label>
+                <label for="születés" class="text-center col-md-2 col-form-label">Születésnap:</label>
                 <div class="col-md-8">
                     <input type="date" class="form-control" name="születés" id="születés">
                 </div>

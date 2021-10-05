@@ -7,7 +7,7 @@ and open the template in the editor.
 <html>
     <head>
         <meta charset="UTF-8">
-        meta name="viewport" content="width=device-width, initial-scale=1.0">
+        <meta name="viewport" content="width=device-width, initial-scale=1.0">
           <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.4.1/css/bootstrap.min.css">
   <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
   <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.4.1/js/bootstrap.min.js"></script>
@@ -34,10 +34,10 @@ and open the template in the editor.
     </nav>
         <div class="container collapse" id ="collapseForm">
          <?php
-        echo "<table style='border:1px solid black;'>
+        echo "<table class='table-striped' style='border:1px solid black;'>
 
 <tr>
-<th>Sorszám</th>
+
 <th>Név</th>
 
 <th>Fajta</th>
@@ -48,17 +48,21 @@ and open the template in the editor.
 <th>Születésnap</th>
 
 </tr>";
-        
-        $mysqli = new mysqli("localhost","root","", "allatok");
-        if($mysqli -> connect_error){
-            echo "Hiba a csatlakozáskor";
-            exit();
+        $conn;
+        $conn = mysqli_connect("localhost","root","", "allatok");
+        if($conn){
+            echo "Csatlakozva"  ;
+        }else{
+            die("Hiba a csatlakozáskor");
+           
         }
-        if($result = $mysqli ->query("select * from kutyik;")){
+      
+
+        if($result = $conn ->query("select * from kutyik;")){
             
             while($row = $result->fetch_assoc() ){
-                echo '<tr><td>' . $row['id'] . '</td>';
-                echo '<td>' . $row['név'] . '</td>';
+                
+                echo '<tr><td>' . $row['név'] . '</td>';
                  echo '<td>' . $row['fajta'] . '</td>';
                  echo '<td>' . $row['testsúly'] . '</td>';
                  echo '<td>' . $row['magasság'] . '</td>';
@@ -68,6 +72,7 @@ and open the template in the editor.
             echo '</table>';
            
         }
+        mysqli_close($conn)
         ?>
             </div>
     </body>
